@@ -9,8 +9,8 @@ print(f"Waiting for connection on RFCOMM channel {port}...")
 bluetooth.advertise_service(
     server_socket,
     "BluetoothServer",
-    service_id="00001101-0000-1000-8000-00805F9B34FB",  # Serial Port Profile (SPP) UUID
-    service_classes=["00001101-0000-1000-8000-00805F9B34FB", bluetooth.SERIAL_PORT_CLASS],
+    service_id="00001101-0000-1000-8000-00805f9b34fb",  # Serial Port Profile (SPP) UUID
+    service_classes=["00001101-0000-1000-8000-00805f9b34fb", bluetooth.SERIAL_PORT_CLASS],
     profiles=[bluetooth.SERIAL_PORT_PROFILE]
 )
 
