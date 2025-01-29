@@ -1,22 +1,21 @@
 #!/bin/bash
 
-# Find Bluetooth Serial Port
-BT_DEVICE=$(ls /dev/rfcomm*)
+# The UUID of the characteristic where we expect to receive data
+CHAR_UUID="0000ffe1-0000-1000-8000-00805f9b34fb"
 
-# Ensure a Bluetooth device is found
-if [ -z "$BT_DEVICE" ]; then
-    echo "No Bluetooth serial port found."
-    exit 1
-fi
+# Make sure Bluetooth is powered on
+bluetoothctl power on
 
-echo "Listening on: $BT_DEVICE"
+# Scan for incoming connections
+echo "Waiting for Bluetooth connection..."
+bluetoothctl scan on & sleep 5
+bluetoothctl scan off
 
-# Continuously read incoming messages
-while true; do
-    if read -r MESSAGE < "$BT_DEVICE"; then
-        echo "Received message: $MESSAGE"
+# Start listening
+echo "Listening for BLE data..."
 
-        # Send response back
-        echo -e "Message received: $MESSAGE" > "$BT_DEVICE"
-    fi
+gatttool -t random -b XX:XX:XX:XX:XX:XX --char-read --uuid=$CHAR_UUID | while read data; do
+    # Convert received HEX data back to text
+    RECEIVED_TEXT=$(echo $data | cut -d":" -f2 | xxd -r -p)
+    echo "Received: $RECEIVED_TEXT"
 done
