@@ -7,6 +7,6 @@ echo -e "power on\ndiscoverable on\npairable on\nadvertise on\nsystem-alias Bitz
 sleep 1
 
 # Start advertising a service UUID (replace UUID with your actual service UUID)
-SERVICE_UUID="00001101-0000-1000-8000-00805F9B34FB"
+SERVICE_UUID="0000180d-0000-1000-8000-00805f9b34fb"
 
 echo -e "advertise uuids $SERVICE_UUID" | bluetoothctl
