@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The UUID of the characteristic where we expect to receive data
-CHAR_UUID="00001800-0000-1000-8000-00805f9b34fb"
+CHAR_UUID="00002a39-0000-1000-8000-00805f9b34fb"
 
 # Make sure Bluetooth is powered on
 bluetoothctl power on
