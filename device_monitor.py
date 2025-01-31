@@ -13,7 +13,7 @@ logging.basicConfig(
 )
 
 # Webhook URL
-WEBHOOK_URL = "https://your-webhook-url.com"
+WEBHOOK_URL = "https://webhook.site/f51f3307-5125-4128-bb02-7497d2b6669c"
 
 # Singleton pattern implementation
 class DeviceMonitor:
