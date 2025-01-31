@@ -3,19 +3,17 @@ import os
 import time
 import logging
 import sys
-from daemon import DaemonContext
 
 # Configure logging
+LOG_FILE = "/var/log/device_monitor.log"
 logging.basicConfig(
-    filename="/var/log/device_monitor.log",
+    filename=LOG_FILE,
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-# Webhook URL
 WEBHOOK_URL = "https://webhook.site/f51f3307-5125-4128-bb02-7497d2b6669c"
 
-# Singleton pattern implementation
 class DeviceMonitor:
     """ Ensures only one instance of the monitoring service runs. """
     
@@ -65,10 +63,23 @@ def run_monitor():
     monitor = DeviceMonitor()
     monitor.send_webhook()
 
-    # Keep running in the background
+    # Keep running and checking periodically
     while True:
         time.sleep(3600)  # Sends update every hour
 
 if __name__ == "__main__":
-    with DaemonContext():
-        run_monitor()
+    pid = os.fork()
+    if pid > 0:
+        sys.exit()  # Exit parent process
+
+    os.setsid()  # Create a new session
+    pid = os.fork()
+    if pid > 0:
+        sys.exit()  # Exit first child process
+
+    # Redirect standard file descriptors
+    sys.stdout = open("/dev/null", "w")
+    sys.stderr = open("/dev/null", "w")
+
+    # Run the main monitoring function
+    run_monitor()
