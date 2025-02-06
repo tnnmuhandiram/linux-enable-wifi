@@ -1,0 +1,5 @@
+docker
+paho-mqtt
+adafruit-circuitpython-dht
+Adafruit-PlatformDetect
+Adafruit-PureIO
