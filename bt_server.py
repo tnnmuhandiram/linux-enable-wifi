@@ -1,30 +1,29 @@
-import bluetooth
+from pydbus import SystemBus
+from gi.repository import GLib
 
-server_socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-port = bluetooth.PORT_ANY  # Use any available port
-server_socket.bind(("", port))
-server_socket.listen(1)
+SERVICE_UUID = "0000abcd-0000-1000-8000-00805f9b34fb"
+CHARACTERISTIC_UUID = "0000dcba-0000-1000-8000-00805f9b34fb"
 
-print(f"Waiting for connection on RFCOMM channel {port}...")
-bluetooth.advertise_service(
-    server_socket,
-    "BluetoothServer",
-    service_id="00001800-0000-1000-8000-00805f9b34fb",  # Serial Port Profile (SPP) UUID
-    service_classes=["00001800-0000-1000-8000-00805f9b34fb", bluetooth.SERIAL_PORT_CLASS],
-    profiles=[bluetooth.SERIAL_PORT_PROFILE]
-)
+class BLECharacteristic:
+    def __init__(self, uuid, flags):
+        self.uuid = uuid
+        self.flags = flags  # Make sure "write" is included
+        self.value = bytearray("Init", "utf-8")
 
-client_socket, client_info = server_socket.accept()
-print(f"Accepted connection from {client_info}")
+    def WriteValue(self, value, options):
+        self.value = value
+        print(f"Received Data: {value.decode()}")
 
-try:
-    while True:
-        data = client_socket.recv(1024).decode("utf-8")
-        if data:
-            print(f"Received: {data}")
-            client_socket.send(f"Echo: {data}".encode("utf-8"))
-except OSError:
-    print("Connection closed.")
-finally:
-    client_socket.close()
-    server_socket.close()
+class BLEService:
+    def __init__(self, uuid):
+        self.uuid = uuid
+        self.characteristics = [BLECharacteristic(CHARACTERISTIC_UUID, ["read", "write"])]
+
+def start_ble_server():
+    bus = SystemBus()
+    service = BLEService(SERVICE_UUID)
+    
+    print("BLE Service Running with Writable Characteristic...")
+    GLib.MainLoop().run()
+
+start_ble_server()
