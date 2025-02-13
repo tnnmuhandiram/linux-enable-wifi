@@ -69,17 +69,37 @@ network={
     psk="${password}"
     key_mgmt=WPA-PSK
 }
-`;
+`.trim();
 
   console.log(`Writing Wi-Fi config to ${wpaSupplicantPath}`);
 
-  fs.appendFile(wpaSupplicantPath, wifiConfig, (err) => {
-    if (err) {
-      console.error(`Failed to update Wi-Fi credentials: ${err.message}`);
+  // Step 1: Delete the existing file if it exists
+  fs.access(wpaSupplicantPath, fs.constants.F_OK, (err) => {
+    if (!err) {
+      console.log(`File exists. Removing ${wpaSupplicantPath}...`);
+      fs.unlink(wpaSupplicantPath, (err) => {
+        if (err) {
+          console.error(`Failed to delete existing Wi-Fi config: ${err.message}`);
+          return;
+        }
+        console.log(`Existing Wi-Fi config deleted.`);
+        // Proceed to write the new file
+        writeWifiConfig(wpaSupplicantPath, wifiConfig);
+      });
     } else {
-      console.log('Wi-Fi credentials updated successfully. Rebooting now...');
+      console.log(`File does not exist. Creating a new one.`);
+      // If file does not exist, directly write the file
+      writeWifiConfig(wpaSupplicantPath, wifiConfig);
+    }
+  });
+}
 
-      // Optional: Delay reboot a bit to finish BLE operation
+function writeWifiConfig(wpaSupplicantPath, wifiConfig) {
+  fs.writeFile(wpaSupplicantPath, wifiConfig, (err) => {
+    if (err) {
+      console.error(`Failed to write Wi-Fi credentials: ${err.message}`);
+    } else {
+      console.log('Wi-Fi credentials written successfully. Rebooting now...');
       setTimeout(() => {
         exec('sudo reboot', (error, stdout, stderr) => {
           if (error) {
@@ -88,7 +108,7 @@ network={
           }
           console.log(`Reboot initiated: ${stdout}`);
         });
-      }, 3000); // 3 seconds delay before reboot
+      }, 3000);
     }
   });
 }
