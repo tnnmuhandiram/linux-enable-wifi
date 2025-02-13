@@ -61,6 +61,9 @@ function setWifiCredentials(ssid, password) {
   const wpaSupplicantPath = '/etc/wpa_supplicant/wpa_supplicant.conf';
 
   const wifiConfig = `
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=US
 network={
     ssid="${ssid}"
     psk="${password}"
