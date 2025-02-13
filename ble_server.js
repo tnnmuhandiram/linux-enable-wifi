@@ -6,7 +6,7 @@ const CHARACTERISTIC_UUID = '87654321-4321-4321-4321-210987654321';
 
 const characteristic = new bleno.Characteristic({
     uuid: CHARACTERISTIC_UUID,
-    properties: ['read', 'write', 'writeWithoutResponse']
+    properties: ['read', 'write', 'writeWithoutResponse'],
     onReadRequest: (offset, callback) => {
         console.log('Read request received');
         callback(bleno.Characteristic.RESULT_SUCCESS, Buffer.from('Hello from Pi!'));
