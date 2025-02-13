@@ -34,7 +34,13 @@ bleno.on('stateChange', (state) => {
 bleno.on('advertisingStart', (error) => {
     if (!error) {
         console.log('Advertising started...');
-        bleno.setServices([service]);
+        bleno.setServices([service], (error) => {
+            if (error) {
+                console.error('Set services error:', error);
+            } else {
+                console.log('Services successfully set!');
+            }
+        });
     } else {
         console.error('Advertising start error:', error);
     }
