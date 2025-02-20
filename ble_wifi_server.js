@@ -142,7 +142,7 @@ network={
     fs.access(uuidFilePath, fs.constants.F_OK, (err) => {
       if (err) {
         
-        console.log(`Generating new UUID: ${newUuid}`);
+        console.log(` UUID: ${uuid}`);
         fs.writeFile(uuidFilePath, uuid, { mode: 0o600 }, (err) => {
           if (err) {
             console.error(`Failed to write UUID: ${err.message}`);
