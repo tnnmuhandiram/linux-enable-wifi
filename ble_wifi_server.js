@@ -16,10 +16,10 @@ const characteristic = new bleno.Characteristic({
   onWriteRequest: (data, offset, withoutResponse, callback) => {
     try {
       const jsonData = JSON.parse(data.toString());
-      const { ssid, password,deviceUUID } = jsonData;
-      console.log(`Received Wi-Fi SSID: ${ssid}, Password: ${password} , deviceUUID: ${deviceUUID}`);
+      const { ssid, password,serialNumber } = jsonData;
+      console.log(`Received Wi-Fi SSID: ${ssid}, Password: ${password} , deviceUUID: ${serialNumber}`);
 
-      setWifiCredentials(ssid, password,uuid);
+      setWifiCredentials(ssid, password,serialNumber);
       callback(bleno.Characteristic.RESULT_SUCCESS);
     } catch (error) {
       console.error('Failed to parse Wi-Fi credentials:', error);
@@ -113,7 +113,7 @@ bleno.on('advertisingStart', (error) => {
 //   });
 
 
-function setWifiCredentials(ssid, password,deviceUUID) {
+function setWifiCredentials(ssid, password,serialNumber) {
   const wpaSupplicantPath = '/etc/wpa_supplicant/wpa_supplicant.conf';
   const uuidFilePath = '/etc/device_uuid';
 
@@ -142,8 +142,8 @@ network={
     fs.access(uuidFilePath, fs.constants.F_OK, (err) => {
       if (err) {
         
-        console.log(` Serial Number: ${deviceUUID}`);
-        fs.writeFile(uuidFilePath, deviceUUID, { mode: 0o600 }, (err) => {
+        console.log(` Serial Number: ${serialNumber}`);
+        fs.writeFile(uuidFilePath, serialNumber, { mode: 0o600 }, (err) => {
           if (err) {
             console.error(`Failed to write Serial Number: ${err.message}`);
             return;
